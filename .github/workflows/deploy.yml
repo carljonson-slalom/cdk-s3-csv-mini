@@ -21,7 +21,7 @@ jobs:
       - name: Configure AWS credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::<699027953523>:role/github-oidc-cdk-deploy
+          role-to-assume: arn:aws:iam::699027953523:role/github-oidc-cdk-deploy
           aws-region: us-west-2
 
       - name: Install CDK & project deps
