@@ -1,0 +1,40 @@
+name: Deploy CDK (main)
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Configure AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::<699027953523>:role/github-oidc-cdk-deploy
+          aws-region: us-west-2
+
+      - name: Install CDK & project deps
+        run: |
+          npm install -g aws-cdk
+          npm ci
+
+      # First run: sets up a CDK toolkit bucket/roles in your account/region
+      - name: CDK bootstrap
+        run: cdk bootstrap
+
+      - name: CDK synth (optional, shows the generated CloudFormation)
+        run: cdk synth
+
+      - name: CDK deploy
+        run: cdk deploy --require-approval never
